@@ -1,0 +1,83 @@
+﻿@{
+    ViewBag.Title = "CORS";
+}
+
+<h1>CORS demo</h1>
+
+
+<form id="userSignup">
+    <input type="text" name="username" placeholder="Name" />
+    <input type="password" name="password" placeholder="Password" />
+    <input type="password" name="confirmpassword" placeholder="Confirm password" />
+    <input type="submit" id="signup" value="Sign up" />
+    <input type="submit" id="signin" value="Sign in" />
+</form>
+
+
+<button id="getRockbands">Get rockbands</button>
+
+<pre id="rockbands">
+ 
+    </pre>
+
+<script src="~/Scripts/jquery-1.8.2.js"></script>
+<script>
+    $(function () {
+        var rockbandSourceUrl = "http://localhost:55209/api/rockbands/";
+
+        var getHeaders = function () {
+            if (token) {
+                return { "Authorization": "Bearer " + token };
+            }
+        };
+
+
+        var getRockbands = function () {
+            $.ajax(rockbandSourceUrl,
+            {
+                type: "GET"
+                , headers: getHeaders()
+            }).always(showRockbands);
+            return false;
+        };
+
+
+
+        var showRockbands = function (obj) {
+            $("#rockbands").text(JSON.stringify(obj, null, 3));
+        };
+
+
+        var register = function () {
+            var registrationUrl = "http://localhost:55209/api/Account/Register";
+            var registrationData = $("#userSignup").serialize();
+            $.post(registrationUrl, registrationData).always(showRockbands);
+            return false;
+        };
+
+        var signin = function () {
+            var tokenUrl = "http://localhost:55209/Token";
+            var loginData = $("#userSignup").serialize();
+            loginData = loginData + "&grant_type=password";
+            $.post(tokenUrl, loginData)
+                .success(saveAccessToken)
+                .always(showRockbands);
+            return false;
+        };
+
+        var token = "";
+
+        var saveAccessToken = function (data) {
+            token = data.access_token;
+        };
+
+        
+        $("#signin").click(signin);
+
+        $("#signup").click(register);
+
+        $("#getRockbands").click(getRockbands);
+    });
+
+</script>
+
