@@ -1,0 +1,5 @@
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectJavascriptImplicitClient\bin\OpenIdConnectJavascriptImplicitClient.dll.config
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectJavascriptImplicitClient\bin\OpenIdConnectJavascriptImplicitClient.dll
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectJavascriptImplicitClient\bin\OpenIdConnectJavascriptImplicitClient.pdb
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectJavascriptImplicitClient\obj\Debug\OpenIdConnectJavascriptImplicitClient.dll
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectJavascriptImplicitClient\obj\Debug\OpenIdConnectJavascriptImplicitClient.pdb

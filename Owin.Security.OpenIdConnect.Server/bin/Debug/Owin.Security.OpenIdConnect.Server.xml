@@ -1,0 +1,1583 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Owin.Security.OpenIdConnect.Server</name>
+    </assembly>
+    <members>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectDefaults">
+            <summary>
+            Default values used by authorization server and bearer authentication.
+            </summary>
+        </member>
+        <member name="F:Owin.Security.OpenIdConnect.Server.OpenIdConnectDefaults.AuthenticationType">
+            <summary>
+            Default value for <see cref="P:Microsoft.Owin.Security.AuthenticationOptions.AuthenticationType"/>.
+            </summary>
+        </member>
+        <member name="F:Owin.Security.OpenIdConnect.Server.OpenIdConnectDefaults.AuthorizationEndpointPath">
+            <summary>
+            Default value for <see cref="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AuthorizationEndpointPath"/>.
+            </summary>
+        </member>
+        <member name="F:Owin.Security.OpenIdConnect.Server.OpenIdConnectDefaults.ConfigurationEndpointPath">
+            <summary>
+            Default value for <see cref="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.ConfigurationEndpointPath"/>.
+            </summary>
+        </member>
+        <member name="F:Owin.Security.OpenIdConnect.Server.OpenIdConnectDefaults.KeysEndpointPath">
+            <summary>
+            Default value for <see cref="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.KeysEndpointPath"/>.
+            </summary>
+        </member>
+        <member name="F:Owin.Security.OpenIdConnect.Server.OpenIdConnectDefaults.TokenEndpointPath">
+            <summary>
+            Default value for <see cref="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.TokenEndpointPath"/>.
+            </summary>
+        </member>
+        <member name="T:Owin.OpenIdConnectServerExtensions">
+            <summary>
+            Provides extension methods allowing to easily register an
+            OWIN-powered OpenID Connect server and to retrieve various
+            OpenID Connect-related contexts from the OWIN environment.
+            </summary>
+        </member>
+        <member name="M:Owin.OpenIdConnectServerExtensions.UseOpenIdConnectServer(Owin.IAppBuilder,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions)">
+            <summary>
+            Adds a specs-compliant OpenID Connect server in the OWIN pipeline.
+            </summary>
+            <param name="app">The web application builder</param>
+            <param name="options">Options which control the behavior of the OpenID Connect server.</param>
+            <returns>The application builder</returns>
+        </member>
+        <member name="M:Owin.OpenIdConnectServerExtensions.GetOpenIdConnectRequest(Microsoft.Owin.IOwinContext)">
+            <summary>
+            Retrieves the <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/> instance
+            associated with the current request from the OWIN context.
+            </summary>
+            <param name="context">The OWIN context.</param>
+            <returns>The <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/> associated with the current request.</returns>
+        </member>
+        <member name="M:Owin.OpenIdConnectServerExtensions.SetOpenIdConnectRequest(Microsoft.Owin.IOwinContext,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Inserts the ambient <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/> request in the OWIN context.
+            </summary>
+            <param name="context">The OWIN context.</param>
+            <param name="request">The ambient <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/>.</param>
+        </member>
+        <member name="M:Owin.OpenIdConnectServerExtensions.GetOpenIdConnectResponse(Microsoft.Owin.IOwinContext)">
+            <summary>
+            Retrieves the <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/> instance
+            associated with the current response from the OWIN context.
+            </summary>
+            <param name="context">The OWIN context.</param>
+            <returns>The <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/> associated with the current response.</returns>
+        </member>
+        <member name="M:Owin.OpenIdConnectServerExtensions.SetOpenIdConnectResponse(Microsoft.Owin.IOwinContext,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Inserts the ambient <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/> response in the OWIN context.
+            </summary>
+            <param name="context">The OWIN context.</param>
+            <param name="response">The ambient <see cref="T:Microsoft.IdentityModel.Protocols.OpenIdConnectMessage"/>.</param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerHandler.TeardownCoreAsync">
+            <remarks>
+            Authentication handlers cannot reliabily write to the response stream
+            from ApplyResponseGrantAsync or ApplyResponseChallengeAsync because these methods
+            are susceptible to be invoked from AuthenticationHandler.OnSendingHeaderCallback
+            where calling Write or WriteAsync on the response stream may result in a deadlock
+            on hosts using streamed responses. To work around this limitation, OpenIdConnectServerHandler
+            doesn't implement ApplyResponseGrantAsync but TeardownCoreAsync,
+            which is never called by AuthenticationHandler.OnSendingHeaderCallback.
+            In theory, this would prevent OpenIdConnectServerHandler from both applying
+            the response grant and allowing the next middleware in the pipeline to alter
+            the response stream but in practice, the OpenIdConnectServerHandler is assumed to be
+            the only middleware allowed to write to the response stream when a response grant has been applied.
+            </remarks>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerMiddleware">
+            <summary>
+            Authorization Server middleware component which is added to an OWIN pipeline. This class is not
+            created by application code directly, instead it is added by calling the the IAppBuilder UseOpenIdConnectServer 
+            extension method.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerMiddleware.#ctor(Microsoft.Owin.OwinMiddleware,Owin.IAppBuilder,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions)">
+            <summary>
+            Authorization Server middleware component which is added to an OWIN pipeline. This constructor is not
+            called by application code directly, instead it is added by calling the the IAppBuilder UseOpenIdConnectServer 
+            extension method.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerMiddleware.CreateHandler">
+            <summary>
+            Called by the AuthenticationMiddleware base class to create a per-request handler. 
+            </summary>
+            <returns>A new instance of the request handler</returns>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions">
+            <summary>
+            Options class provides information needed to control Authorization Server middleware behavior
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.#ctor">
+            <summary>
+            Creates an instance of authorization server options with default values.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.Issuer">
+            <summary>
+            The base address used to uniquely identify the authorization server.
+            The URI must be absolute and may contain a path, but no query string or fragment part.
+            Unless AllowInsecureHttp has been set to true, an HTTPS address must be provided.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.SigningCredentials">
+            <summary>
+            The credentials used to sign id_tokens. You can provide any symmetric (e.g <see cref="T:System.IdentityModel.Tokens.InMemorySymmetricSecurityKey"/>)
+            or asymmetric (e.g <see cref="T:System.IdentityModel.Tokens.RsaSecurityKey"/>, <see cref="T:System.IdentityModel.Tokens.X509AsymmetricSecurityKey"/> or <see cref="T:System.IdentityModel.Tokens.X509SecurityKey"/>)
+            security key, but you're strongly encouraged to use a 2048 or 4096-bits RSA asymmetric key in production.
+            Note that only keys supporting the <see cref="F:System.IdentityModel.Tokens.SecurityAlgorithms.RsaSha256Signature"/> algorithm can be exposed
+            on the configuration metadata endpoint. A <see cref="T:System.IdentityModel.Tokens.X509SigningCredentials"/> instance may also be provided.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AuthorizationEndpointPath">
+            <summary>
+            The request path where client applications will redirect the user-agent in order to 
+            obtain user consent to issue a token. Must begin with a leading slash, like "/connect/authorize".
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.ConfigurationEndpointPath">
+            <summary>
+            The request path where client applications will be able to retrieve the configuration metadata associated
+            with this instance. Must begin with a leading slash, like "/.well-known/openid-configuration".
+            This setting can be set to <see cref="F:Microsoft.Owin.PathString.Empty"/> to disable the configuration endpoint.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.KeysEndpointPath">
+            <summary>
+            The request path where client applications will be able to retrieve the JSON Web Key Set
+            associated with this instance. Must begin with a leading slash, like "/.well-known/jwks".
+            This setting can be set to <see cref="F:Microsoft.Owin.PathString.Empty"/> to disable the crypto endpoint.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.TokenEndpointPath">
+            <summary>
+            The request path client applications communicate with directly as part of the OpenID Connect protocol. 
+            Must begin with a leading slash, like "/connect/token". If the client is issued a client_secret, it must
+            be provided to this endpoint. You can set it to <see cref="F:Microsoft.Owin.PathString.Empty"/> to disable the token endpoint.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.Provider">
+            <summary>
+            The object provided by the application to process events raised by the Authorization Server middleware.
+            The application may implement the interface fully, or it may create an instance of OpenIdConnectServerProvider
+            and assign delegates only to the events it wants to process.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AuthorizationCodeFormat">
+            <summary>
+            The data format used to protect and unprotect the information contained in the authorization code. 
+            If not provided by the application the default data protection provider depends on the host server. 
+            The SystemWeb host on IIS will use ASP.NET machine key data protection, and HttpListener and other self-hosted
+            servers will use DPAPI data protection.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AccessTokenFormat">
+            <summary>
+            The data format used to protect the information contained in the access token. 
+            If not provided by the application the default data protection provider depends on the host server. 
+            The SystemWeb host on IIS will use ASP.NET machine key data protection, and HttpListener and other self-hosted
+            servers will use DPAPI data protection. If a different access token
+            provider or format is assigned, a compatible instance must be assigned to the OAuthBearerAuthenticationOptions.AccessTokenProvider 
+            or OAuthBearerAuthenticationOptions.AccessTokenFormat property of the resource server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.RefreshTokenFormat">
+            <summary>
+            The data format used to protect and unprotect the information contained in the refresh token. 
+            If not provided by the application the default data protection provider depends on the host server. 
+            The SystemWeb host on IIS will use ASP.NET machine key data protection, and HttpListener and other self-hosted
+            servers will use DPAPI data protection.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AuthorizationCodeLifetime">
+            <summary>
+            The period of time the authorization code remains valid after being issued. The default is five minutes.
+            This time span must also take into account clock synchronization between servers in a web farm, so a very 
+            brief value could result in unexpectedly expired tokens.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AccessTokenLifetime">
+            <summary>
+            The period of time the access token remains valid after being issued. The default is twenty minutes.
+            The client application is expected to refresh or acquire a new access token after the token has expired. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.IdentityTokenLifetime">
+            <summary>
+            The period of time the identity token remains valid after being issued. The default is twenty minutes.
+            The client application is expected to refresh or acquire a new identity token after the token has expired. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AuthorizationCodeProvider">
+            <summary>
+            Produces a single-use authorization code to return to the client application. For the OpenID Connect server to be secure the
+            application MUST provide an instance for AuthorizationCodeProvider where the token produced by the OnCreate or OnCreateAsync event 
+            is considered valid for only one call to OnReceive or OnReceiveAsync. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AccessTokenProvider">
+            <summary>
+            Produces a bearer token the client application will typically be providing to resource server as the authorization bearer 
+            http request header. If not provided the token produced on the server's default data protection. If a different access token
+            provider or format is assigned, a compatible instance must be assigned to the OAuthBearerAuthenticationOptions.AccessTokenProvider 
+            or OAuthBearerAuthenticationOptions.AccessTokenFormat property of the resource server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.RefreshTokenProvider">
+            <summary>
+            Produces a refresh token which may be used to produce a new access token when needed. If not provided the authorization server will
+            not return refresh tokens from the /Token endpoint.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.ApplicationCanDisplayErrors">
+            <summary>
+            Set to true if the web application is able to render error messages on the authorization endpoint. This is only needed for cases where
+            the browser is not redirected back to the client application, for example, when the client_id or redirect_uri are incorrect. The 
+            authorization endpoint should expect to see "oauth.Error", "oauth.ErrorDescription", "oauth.ErrorUri" properties added to the owin environment.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.SystemClock">
+            <summary>
+            Used to know what the current clock time is when calculating or validating token expiration. When not assigned default is based on
+            DateTimeOffset.UtcNow. This is typically needed only for unit testing.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.AllowInsecureHttp">
+            <summary>
+            True to allow incoming requests to arrive on HTTP and to allow redirect_uri parameters to have HTTP URI addresses.
+            Setting this option to false in production is strongly encouraged to mitigate man-in-the-middle attacks.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.SignatureProvider">
+            <summary>
+            The provider used to sign the identity tokens produced by the authorization server.
+            Providing an instance is generally not required.
+            </summary>
+            <seealso cref="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.SigningCredentials"/>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions.TokenHandler">
+            <summary>
+            The <see cref="T:System.IdentityModel.Tokens.JwtSecurityTokenHandler"/> instance used to forge identity tokens.
+            You can replace the default instance to change the way id_tokens are serialized.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.BaseValidatingClientContext">
+            <summary>
+            Base class used for certain event contexts
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1">
+            <summary>
+            Base class used for certain event contexts
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.#ctor(Microsoft.Owin.IOwinContext,`0)">
+            <summary>
+            Initializes base class used for certain event contexts
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.Validated">
+            <summary>
+            Marks this context as validated by the application. IsValidated becomes true and HasError becomes false as a result of calling.
+            </summary>
+            <returns>True if the validation has taken effect.</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.Rejected">
+            <summary>
+            Marks this context as not validated by the application. IsValidated and HasError become false as a result of calling.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.SetError(System.String)">
+            <summary>
+            Marks this context as not validated by the application and assigns various error information properties. 
+            HasError becomes true and IsValidated becomes false as a result of calling.
+            </summary>
+            <param name="error">Assigned to the Error property</param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.SetError(System.String,System.String)">
+            <summary>
+            Marks this context as not validated by the application and assigns various error information properties. 
+            HasError becomes true and IsValidated becomes false as a result of calling.
+            </summary>
+            <param name="error">Assigned to the Error property</param>
+            <param name="errorDescription">Assigned to the ErrorDescription property</param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.SetError(System.String,System.String,System.String)">
+            <summary>
+            Marks this context as not validated by the application and assigns various error information properties. 
+            HasError becomes true and IsValidated becomes false as a result of calling.
+            </summary>
+            <param name="error">Assigned to the Error property</param>
+            <param name="errorDescription">Assigned to the ErrorDescription property</param>
+            <param name="errorUri">Assigned to the ErrorUri property</param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.IsValidated">
+            <summary>
+            True if application code has called any of the Validate methods on this context.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.HasError">
+            <summary>
+            True if application code has called any of the SetError methods on this context.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.Error">
+            <summary>
+            The error argument provided when SetError was called on this context. This is eventually
+            returned to the client app as the OpenIdConnect "error" parameter.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.ErrorDescription">
+            <summary>
+            The optional errorDescription argument provided when SetError was called on this context. This is eventually
+            returned to the client app as the OpenIdConnect "error_description" parameter.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingContext`1.ErrorUri">
+            <summary>
+            The optional errorUri argument provided when SetError was called on this context. This is eventually
+            returned to the client app as the OpenIdConnect "error_uri" parameter.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingClientContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes base class used for certain event contexts
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingClientContext.AuthorizationRequest">
+            <summary>
+            Gets the authorization request. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingClientContext.ClientId">
+            <summary>
+            The "client_id" parameter for the current request.
+            The authorization server application is responsible for 
+            validating this value to ensure it identifies a registered client.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.BaseValidatingTicketContext`1">
+            <summary>
+            Base class used for certain event contexts
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingTicketContext`1.#ctor(Microsoft.Owin.IOwinContext,`0,Microsoft.Owin.Security.AuthenticationTicket)">
+            <summary>
+            Initializes base class used for certain event contexts
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingTicketContext`1.Validated(Microsoft.Owin.Security.AuthenticationTicket)">
+            <summary>
+            Replaces the ticket information on this context and marks it as as validated by the application. 
+            IsValidated becomes true and HasError becomes false as a result of calling.
+            </summary>
+            <param name="ticket">Assigned to the Ticket property</param>
+            <returns>True if the validation has taken effect.</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.BaseValidatingTicketContext`1.Validated(System.Security.Claims.ClaimsIdentity)">
+            <summary>
+            Alters the ticket information on this context and marks it as as validated by the application. 
+            IsValidated becomes true and HasError becomes false as a result of calling.
+            </summary>
+            <param name="identity">Assigned to the Ticket.Identity property</param>
+            <returns>True if the validation has taken effect.</returns>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.BaseValidatingTicketContext`1.Ticket">
+            <summary>
+            Contains the identity and properties for the application to authenticate. If the Validated method
+            is invoked with an AuthenticationTicket or ClaimsIdentity argument, that new value is assigned to 
+            this property in addition to changing IsValidated to true.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider">
+            <summary>
+            Interface used by the authorization server to communicate with the web application while processing requests.
+            Implementers are strongly encouraged to use the default <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider"/>
+            implementation to avoid breaking changes in the future.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.MatchEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext)">
+            <summary>
+            Called to determine if an incoming request is treated as an authorization or token
+            endpoint. If Options.AuthorizationEndpointPath or Options.TokenEndpointPath
+            are assigned values, then handling this event is optional and context.IsAuthorizationEndpoint and context.IsTokenEndpoint
+            will already be true if the request path matches.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.ValidateClientRedirectUri(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext)">
+            <summary>
+            Called to validate that the context.ClientId is a registered "client_id", and that the context.RedirectUri a "redirect_uri" 
+            registered for that client. This only occurs when processing the authorization endpoint. The application MUST implement this
+            call, and it MUST validate both of those factors before calling context.Validated. If the context.Validated method is called
+            with a given redirectUri parameter, then IsValidated will only become true if the incoming redirect URI matches the given redirect URI. 
+            If context.Validated is not called the request will not proceed further. 
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.ValidateClientAuthentication(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext)">
+            <summary>
+            Called to validate that the origin of the request is a registered "client_id", and that the correct credentials for that client are
+            present on the request. If the web application accepts Basic authentication credentials, 
+            context.TryGetBasicCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request header. If the web 
+            application accepts "client_id" and "client_secret" as form encoded POST parameters, 
+            context.TryGetFormCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request body.
+            If context.Validated is not called the request will not proceed further. 
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.ValidateAuthorizationRequest(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateAuthorizationRequestContext)">
+            <summary>
+            Called for each request to the authorization endpoint to determine if the request is valid and should continue. 
+            The default behavior when using the OpenIdConnectServerProvider is to assume well-formed requests, with 
+            validated client redirect URI, should continue processing. An application may add any additional constraints.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.ValidateTokenRequest(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateTokenRequestContext)">
+            <summary>
+            Called for each request to the Token endpoint to determine if the request is valid and should continue. 
+            The default behavior when using the OpenIdConnectServerProvider is to assume well-formed requests, with 
+            validated client credentials, should continue processing. An application may add any additional constraints.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.GrantAuthorizationCode(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantAuthorizationCodeContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "authorization_code". This occurs after the authorization
+            endpoint as redirected the user-agent back to the client with a "code" parameter, and the client is exchanging that for an "access_token".
+            The claims and properties 
+            associated with the authorization code are present in the context.Ticket. The application must call context.Validated to instruct the Authorization
+            Server middleware to issue an access token based on those claims and properties. The call to context.Validated may be given a different
+            AuthenticationTicket or ClaimsIdentity in order to control which information flows from authorization code to access token.
+            The default behavior when using the OpenIdConnectServerProvider is to flow information from the authorization code to 
+            the access token unmodified.
+            See also http://tools.ietf.org/html/rfc6749#section-4.1.3
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.GrantRefreshToken(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantRefreshTokenContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "refresh_token". This occurs if your application has issued a "refresh_token" 
+            along with the "access_token", and the client is attempting to use the "refresh_token" to acquire a new "access_token", and possibly a new "refresh_token".
+            To issue a refresh token the an Options.RefreshTokenProvider must be assigned to create the value which is returned. The claims and properties 
+            associated with the refresh token are present in the context.Ticket. The application must call context.Validated to instruct the 
+            Authorization Server middleware to issue an access token based on those claims and properties. The call to context.Validated may 
+            be given a different AuthenticationTicket or ClaimsIdentity in order to control which information flows from the refresh token to 
+            the access token. The default behavior when using the OpenIdConnectServerProvider is to flow information from the refresh token to 
+            the access token unmodified.
+            See also http://tools.ietf.org/html/rfc6749#section-6
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.GrantResourceOwnerCredentials(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "password". This occurs when the user has provided name and password
+            credentials directly into the client application's user interface, and the client application is using those to acquire an "access_token" and 
+            optional "refresh_token". If the web application supports the
+            resource owner credentials grant type it must validate the context.Username and context.Password as appropriate. To issue an
+            access token the context.Validated must be called with a new ticket containing the claims about the resource owner which should be associated
+            with the access token. The application should take appropriate measures to ensure that the endpoint isn't abused by malicious callers.  . 
+            The default behavior is to reject this grant type.
+            See also http://tools.ietf.org/html/rfc6749#section-4.3.2
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.GrantClientCredentials(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "client_credentials". This occurs when a registered client
+            application wishes to acquire an "access_token" to interact with protected resources on it's own behalf, rather than on behalf of an authenticated user. 
+            If the web application supports the client credentials it may assume the context.ClientId has been validated by the ValidateClientAuthentication call.
+            To issue an access token the context.Validated must be called with a new ticket containing the claims about the client application which should be associated
+            with the access token. The application should take appropriate measures to ensure that the endpoint isn't abused by malicious callers.
+            The default behavior is to reject this grant type.
+            See also http://tools.ietf.org/html/rfc6749#section-4.4.2
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.GrantCustomExtension(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext)">
+            <summary>
+            Called when a request to the Token andpoint arrives with a "grant_type" of any other value. If the application supports custom grant types
+            it is entirely responsible for determining if the request should result in an access_token. If context.Validated is called with ticket
+            information the response body is produced in the same way as the other standard grant types. If additional response parameters must be
+            included they may be added in the final TokenEndpoint call.
+            See also http://tools.ietf.org/html/rfc6749#section-4.5
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.AuthorizationEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointContext)">
+            <summary>
+            Called at the final stage of an incoming authorization endpoint request before the execution continues on to the web application component 
+            responsible for producing the html response. Anything present in the OWIN pipeline following the Authorization Server may produce the
+            response for the authorization page. If running on IIS any ASP.NET technology running on the server may produce the response for the 
+            authorization page. If the web application wishes to produce the response directly in the AuthorizationEndpoint call it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop other handlers from executing. If the web application wishes
+            to grant the authorization directly in the AuthorizationEndpoint call it cay call context.OwinContext.Authentication.SignIn with the
+            appropriate ClaimsIdentity and should call context.RequestCompleted to stop other handlers from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.AuthorizationEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext)">
+            <summary>
+            Called before the AuthorizationEndpoint redirects its response to the caller.
+            The response could contain an access token when using implicit flow or
+            an authorization code when using the authorization code flow.
+            If the web application wishes to produce the authorization response directly in the AuthorizationEndpoint call it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop other handlers from executing.
+            This call may also be used to add additional response parameters to the authorization response.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.ConfigurationEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointContext)">
+            <summary>
+            Called by the client applications to retrieve the OpenID Connect configuration associated with this instance.
+            If the web application wishes to produce the configuration metadata directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.ConfigurationEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext)">
+            <summary>
+            Called before the authorization server starts emitting the OpenID Connect configuration associated with this instance.
+            If the web application wishes to produce the configuration metadata directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.KeysEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointContext)">
+            <summary>
+            Called by the client applications to retrieve the OpenID Connect JSON Web Key set associated with this instance.
+            If the web application wishes to produce the JSON Web Key set directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.KeysEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointResponseContext)">
+            <summary>
+            Called before the authorization server starts emitting the OpenID Connect JSON Web Key set associated with this instance.
+            If the web application wishes to produce the JSON Web Key set directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.TokenEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext)">
+            <summary>
+            Called at the final stage of a successful Token endpoint request. An application may implement this call in order to do any final 
+            modification of the claims being used to issue access or refresh tokens. This call may also be used in order to add additional 
+            response parameters to the Token endpoint's json response body.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider.TokenEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext)">
+            <summary>
+            Called before the TokenEndpoint redirects its response to the caller. 
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointContext">
+            <summary>
+            An event raised before the authorization server handles
+            the request made to the configuration metadata endpoint.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions)">
+            <summary>
+            Creates an instance of this context.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointContext">
+            <summary>
+            An event raised before the authorization server handles
+            the request made to the JWKS metadata endpoint.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions)">
+            <summary>
+            Creates an instance of this context.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointResponseContext">
+            <summary>
+            An event raised before the authorization server starts
+            writing the JWKS metadata to the response stream.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointResponseContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions)">
+            <summary>
+            Creates an instance of this context.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointResponseContext.Keys">
+            <summary>
+            Gets a list of the JSON Web Keys found by the authorization server.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext">
+            <summary>
+            An event raised before the authorization server starts
+            writing the configuration metadata to the response stream.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions)">
+            <summary>
+            Creates an instance of this context.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.AuthorizationEndpoint">
+            <summary>
+            Gets or sets the authorization endpoint address.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.AdditionalParameters">
+            <summary>
+            Enables additional values to be appended to the metadata response.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.KeyEndpoint">
+            <summary>
+            Gets or sets the JWKS endpoint address.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.Issuer">
+            <summary>
+            Gets or sets the issuer address.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.GrantTypes">
+            <summary>
+            Gets a list of the grant types
+            supported by the authorization server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.ResponseModes">
+            <summary>
+            Gets a list of the response modes
+            supported by the authorization server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.ResponseTypes">
+            <summary>
+            Gets a list of the response types
+            supported by the authorization server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.Scopes">
+            <summary>
+            Gets a list of the scope values
+            supported by the authorization server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.SigningAlgorithms">
+            <summary>
+            Gets a list of the signing algorithms
+            supported by the authorization server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.SubjectTypes">
+            <summary>
+            Gets a list of the subject types
+            supported by the authorization server.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext.TokenEndpoint">
+            <summary>
+            Gets or sets the token endpoint address.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider">
+            <summary>
+            Default implementation of <see cref="T:Owin.Security.OpenIdConnect.Server.IOpenIdConnectServerProvider"/> used by the authorization
+            server to communicate with the web application while processing requests.
+            <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider"/> provides some default behavior, 
+            may be used as a virtual base class, and offers delegate properties
+            which may be used to handle individual calls without declaring a new class type.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.#ctor">
+            <summary>
+            Creates new instance of default provider behavior
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.MatchEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext)">
+            <summary>
+            Called to determine if an incoming request is treated as an authorization or token
+            endpoint. If Options.AuthorizationEndpointPath or Options.TokenEndpointPath
+            are assigned values, then handling this event is optional and context.IsAuthorizationEndpoint and context.IsTokenEndpoint
+            will already be true if the request path matches.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.ValidateClientRedirectUri(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext)">
+            <summary>
+            Called to validate that the context.ClientId is a registered "client_id", and that the context.RedirectUri a "redirect_uri" 
+            registered for that client. This only occurs when processing the authorization endpoint. The application MUST implement this
+            call, and it MUST validate both of those factors before calling context.Validated. If the context.Validated method is called
+            with a given redirectUri parameter, then IsValidated will only become true if the incoming redirect URI matches the given redirect URI. 
+            If context.Validated is not called the request will not proceed further. 
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.ValidateClientAuthentication(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext)">
+            <summary>
+            Called to validate that the origin of the request is a registered "client_id", and that the correct credentials for that client are
+            present on the request. If the web application accepts Basic authentication credentials, 
+            context.TryGetBasicCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request header. If the web 
+            application accepts "client_id" and "client_secret" as form encoded POST parameters, 
+            context.TryGetFormCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request body.
+            If context.Validated is not called the request will not proceed further. 
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.ValidateAuthorizationRequest(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateAuthorizationRequestContext)">
+            <summary>
+            Called for each request to the authorization endpoint to determine if the request is valid and should continue. 
+            The default behavior when using the OpenIdConnectServerProvider is to assume well-formed requests, with 
+            validated client redirect URI, should continue processing. An application may add any additional constraints.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.ValidateTokenRequest(Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateTokenRequestContext)">
+            <summary>
+            Called for each request to the Token endpoint to determine if the request is valid and should continue. 
+            The default behavior when using the OpenIdConnectServerProvider is to assume well-formed requests, with 
+            validated client credentials, should continue processing. An application may add any additional constraints.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.GrantAuthorizationCode(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantAuthorizationCodeContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "authorization_code". This occurs after the authorization
+            endpoint as redirected the user-agent back to the client with a "code" parameter, and the client is exchanging that for an "access_token".
+            The claims and properties 
+            associated with the authorization code are present in the context.Ticket. The application must call context.Validated to instruct the Authorization
+            Server middleware to issue an access token based on those claims and properties. The call to context.Validated may be given a different
+            AuthenticationTicket or ClaimsIdentity in order to control which information flows from authorization code to access token.
+            The default behavior when using the OpenIdConnectServerProvider is to flow information from the authorization code to 
+            the access token unmodified.
+            See also http://tools.ietf.org/html/rfc6749#section-4.1.3
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.GrantRefreshToken(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantRefreshTokenContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "refresh_token". This occurs if your application has issued a "refresh_token" 
+            along with the "access_token", and the client is attempting to use the "refresh_token" to acquire a new "access_token", and possibly a new "refresh_token".
+            To issue a refresh token the an Options.RefreshTokenProvider must be assigned to create the value which is returned. The claims and properties 
+            associated with the refresh token are present in the context.Ticket. The application must call context.Validated to instruct the 
+            Authorization Server middleware to issue an access token based on those claims and properties. The call to context.Validated may 
+            be given a different AuthenticationTicket or ClaimsIdentity in order to control which information flows from the refresh token to 
+            the access token. The default behavior when using the OpenIdConnectServerProvider is to flow information from the refresh token to 
+            the access token unmodified.
+            See also http://tools.ietf.org/html/rfc6749#section-6
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.GrantResourceOwnerCredentials(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "password". This occurs when the user has provided name and password
+            credentials directly into the client application's user interface, and the client application is using those to acquire an "access_token" and 
+            optional "refresh_token". If the web application supports the
+            resource owner credentials grant type it must validate the context.Username and context.Password as appropriate. To issue an
+            access token the context.Validated must be called with a new ticket containing the claims about the resource owner which should be associated
+            with the access token. The application should take appropriate measures to ensure that the endpoint isn't abused by malicious callers.
+            The default behavior is to reject this grant type.
+            See also http://tools.ietf.org/html/rfc6749#section-4.3.2
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.GrantClientCredentials(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext)">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "client_credentials". This occurs when a registered client
+            application wishes to acquire an "access_token" to interact with protected resources on it's own behalf, rather than on behalf of an authenticated user. 
+            If the web application supports the client credentials it may assume the context.ClientId has been validated by the ValidateClientAuthentication call.
+            To issue an access token the context.Validated must be called with a new ticket containing the claims about the client application which should be associated
+            with the access token. The application should take appropriate measures to ensure that the endpoint isn't abused by malicious callers.
+            The default behavior is to reject this grant type.
+            See also http://tools.ietf.org/html/rfc6749#section-4.4.2
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.GrantCustomExtension(Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext)">
+            <summary>
+            Called when a request to the Token andpoint arrives with a "grant_type" of any other value. If the application supports custom grant types
+            it is entirely responsible for determining if the request should result in an access_token. If context.Validated is called with ticket
+            information the response body is produced in the same way as the other standard grant types. If additional response parameters must be
+            included they may be added in the final TokenEndpoint call.
+            See also http://tools.ietf.org/html/rfc6749#section-4.5
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.AuthorizationEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointContext)">
+            <summary>
+            Called at the final stage of an incoming authorization endpoint request before the execution continues on to the web application component 
+            responsible for producing the html response. Anything present in the OWIN pipeline following the Authorization Server may produce the
+            response for the authorization page. If running on IIS any ASP.NET technology running on the server may produce the response for the 
+            authorization page. If the web application wishes to produce the response directly in the AuthorizationEndpoint call it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop other handlers from executing. If the web application wishes
+            to grant the authorization directly in the AuthorizationEndpoint call it cay call context.OwinContext.Authentication.SignIn with the
+            appropriate ClaimsIdentity and should call context.RequestCompleted to stop other handlers from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.AuthorizationEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext)">
+            <summary>
+            Called before the AuthorizationEndpoint redirects its response to the caller.
+            The response could contain an access token when using implicit flow or
+            an authorization code when using the authorization code flow.
+            If the web application wishes to produce the authorization response directly in the AuthorizationEndpoint call it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop other handlers from executing.
+            This call may also be used to add additional response parameters to the authorization response.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.ConfigurationEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointContext)">
+            <summary>
+            Called by the client applications to retrieve the OpenID Connect configuration associated with this instance.
+            If the web application wishes to produce the configuration metadata directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.ConfigurationEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectConfigurationEndpointResponseContext)">
+            <summary>
+            Called before the authorization server starts emitting the OpenID Connect configuration associated with this instance.
+            If the web application wishes to produce the configuration metadata directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.KeysEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointContext)">
+            <summary>
+            Called by the client applications to retrieve the OpenID Connect JSON Web Key set associated with this instance.
+            If the web application wishes to produce the JSON Web Key set directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.KeysEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectKeysEndpointResponseContext)">
+            <summary>
+            Called before the authorization server starts emitting the OpenID Connect JSON Web Key set associated with this instance.
+            If the web application wishes to produce the JSON Web Key set directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.TokenEndpoint(Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext)">
+            <summary>
+            Called at the final stage of a successful Token endpoint request. An application may implement this call in order to do any final 
+            modification of the claims being used to issue access or refresh tokens. This call may also be used in order to add additional 
+            response parameters to the Token endpoint's json response body.
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.TokenEndpointResponse(Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext)">
+            <summary>
+            Called before the TokenEndpoint redirects its response to the caller. 
+            </summary>
+            <param name="context">The context of the event carries information in and results out.</param>
+            <returns>Task to enable asynchronous execution</returns>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnMatchEndpoint">
+            <summary>
+            Called to determine if an incoming request is treated as an authorization or token
+            endpoint. If Options.AuthorizationEndpointPath or Options.TokenEndpointPath
+            are assigned values, then handling this event is optional and context.IsAuthorizationEndpoint and context.IsTokenEndpoint
+            will already be true if the request path matches.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnValidateClientRedirectUri">
+            <summary>
+            Called to validate that the context.ClientId is a registered "client_id", and that the context.RedirectUri a "redirect_uri" 
+            registered for that client. This only occurs when processing the authorization endpoint. The application MUST implement this
+            call, and it MUST validate both of those factors before calling context.Validated. If the context.Validated method is called
+            with a given redirectUri parameter, then IsValidated will only become true if the incoming redirect URI matches the given redirect URI. 
+            If context.Validated is not called the request will not proceed further. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnValidateClientAuthentication">
+            <summary>
+            Called to validate that the origin of the request is a registered "client_id", and that the correct credentials for that client are
+            present on the request. If the web application accepts Basic authentication credentials, 
+            context.TryGetBasicCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request header. If the web 
+            application accepts "client_id" and "client_secret" as form encoded POST parameters, 
+            context.TryGetFormCredentials(out clientId, out clientSecret) may be called to acquire those values if present in the request body.
+            If context.Validated is not called the request will not proceed further. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnValidateAuthorizationRequest">
+            <summary>
+            Called for each request to the authorization endpoint to determine if the request is valid and should continue. 
+            The default behavior when using the OpenIdConnectServerProvider is to assume well-formed requests, with 
+            validated client redirect URI, should continue processing. An application may add any additional constraints.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnValidateTokenRequest">
+            <summary>
+            Called for each request to the Token endpoint to determine if the request is valid and should continue. 
+            If the application supports custom grant types it is entirely responsible for determining if the request 
+            should result in an access_token. 
+            The default behavior when using the OpenIdConnectServerProvider is to assume well-formed requests, with 
+            validated client credentials, should continue processing. An application may add any additional constraints.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnGrantAuthorizationCode">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "authorization_code". This occurs after the authorization
+            endpoint as redirected the user-agent back to the client with a "code" parameter, and the client is exchanging that for an "access_token".
+            The claims and properties 
+            associated with the authorization code are present in the context.Ticket. The application must call context.Validated to instruct the Authorization
+            Server middleware to issue an access token based on those claims and properties. The call to context.Validated may be given a different
+            AuthenticationTicket or ClaimsIdentity in order to control which information flows from authorization code to access token.
+            The default behavior when using the OpenIdConnectServerProvider is to flow information from the authorization code to 
+            the access token unmodified.
+            See also http://tools.ietf.org/html/rfc6749#section-4.1.3
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnGrantResourceOwnerCredentials">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "password". This occurs when the user has provided name and password
+            credentials directly into the client application's user interface, and the client application is using those to acquire an "access_token" and 
+            optional "refresh_token". If the web application supports the
+            resource owner credentials grant type it must validate the context.Username and context.Password as appropriate. To issue an
+            access token the context.Validated must be called with a new ticket containing the claims about the resource owner which should be associated
+            with the access token. The application should take appropriate measures to ensure that the endpoint isn�t abused by malicious callers.
+            The default behavior is to reject this grant type.
+            See also http://tools.ietf.org/html/rfc6749#section-4.3.2
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnGrantClientCredentials">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "client_credentials". This occurs when a registered client
+            application wishes to acquire an "access_token" to interact with protected resources on it's own behalf, rather than on behalf of an authenticated user. 
+            If the web application supports the client credentials it may assume the context.ClientId has been validated by the ValidateClientAuthentication call.
+            To issue an access token the context.Validated must be called with a new ticket containing the claims about the client application which should be associated
+            with the access token. The application should take appropriate measures to ensure that the endpoint isn�t abused by malicious callers.
+            The default behavior is to reject this grant type.
+            See also http://tools.ietf.org/html/rfc6749#section-4.4.2
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnGrantRefreshToken">
+            <summary>
+            Called when a request to the Token endpoint arrives with a "grant_type" of "refresh_token". This occurs if your application has issued a "refresh_token" 
+            along with the "access_token", and the client is attempting to use the "refresh_token" to acquire a new "access_token", and possibly a new "refresh_token".
+            To issue a refresh token the an Options.RefreshTokenProvider must be assigned to create the value which is returned. The claims and properties 
+            associated with the refresh token are present in the context.Ticket. The application must call context.Validated to instruct the 
+            Authorization Server middleware to issue an access token based on those claims and properties. The call to context.Validated may 
+            be given a different AuthenticationTicket or ClaimsIdentity in order to control which information flows from the refresh token to 
+            the access token. The default behavior when using the OpenIdConnectServerProvider is to flow information from the refresh token to 
+            the access token unmodified.
+            See also http://tools.ietf.org/html/rfc6749#section-6
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnGrantCustomExtension">
+            <summary>
+            Called when a request to the Token andpoint arrives with a "grant_type" of any other value. If the application supports custom grant types
+            it is entirely responsible for determining if the request should result in an access_token. If context.Validated is called with ticket
+            information the response body is produced in the same way as the other standard grant types. If additional response parameters must be
+            included they may be added in the final TokenEndpoint call.
+            See also http://tools.ietf.org/html/rfc6749#section-4.5
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnAuthorizationEndpoint">
+            <summary>
+            Called at the final stage of an incoming authorization endpoint request before the execution continues on to the web application component 
+            responsible for producing the html response. Anything present in the OWIN pipeline following the Authorization Server may produce the
+            response for the authorization page. If running on IIS any ASP.NET technology running on the server may produce the response for the 
+            authorization page. If the web application wishes to produce the response directly in the AuthorizationEndpoint call it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop other handlers from executing. If the web application wishes
+            to grant the authorization directly in the AuthorizationEndpoint call it cay call context.OwinContext.Authentication.SignIn with the
+            appropriate ClaimsIdentity and should call context.RequestCompleted to stop other handlers from executing.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnAuthorizationEndpointResponse">
+            <summary>
+            Called before the AuthorizationEndpoint redirects its response to the caller.
+            The response could contain an access token when using implicit flow or
+            an authorization code when using the authorization code flow.
+            If the web application wishes to produce the authorization response directly in the AuthorizationEndpoint call it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop other handlers from executing.
+            This call may also be used to add additional response parameters to the authorization response.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnConfigurationEndpoint">
+            <summary>
+            Called by the client applications to retrieve the OpenID Connect configuration associated with this instance.
+            If the web application wishes to produce the configuration metadata directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnConfigurationEndpointResponse">
+            <summary>
+            Called before the authorization server starts emitting the OpenID Connect configuration associated with this instance.
+            If the web application wishes to produce the configuration metadata directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnKeysEndpoint">
+            <summary>
+            Called by the client applications to retrieve the OpenID Connect JSON Web Key set associated with this instance.
+            If the web application wishes to produce the JSON Web Key set directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnKeysEndpointResponse">
+            <summary>
+            Called before the authorization server starts emitting the OpenID Connect JSON Web Key set associated with this instance.
+            If the web application wishes to produce the JSON Web Key set directly in this call, it may write to the 
+            context.Response directly and should call context.RequestCompleted to stop the default behavior from executing.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnTokenEndpoint">
+            <summary>
+            Called at the final stage of a successful Token endpoint request. An application may implement this call in order to do any final 
+            modification of the claims being used to issue access or refresh tokens. This call may also be used in order to add additional 
+            response parameters to the Token endpoint's json response body.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectServerProvider.OnTokenEndpointResponse">
+            <summary>
+            Called before the TokenEndpoint redirects its response to the caller. 
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointContext">
+            <summary>
+            An event raised after the Authorization Server has processed the request, but before it is passed on to the web application.
+            Calling RequestCompleted will prevent the request from passing on to the web application.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Creates an instance of this context
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointContext.AuthorizationRequest">
+            <summary>
+            Gets the authorization request.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext">
+            <summary>
+            Provides context information when processing an Authorization Response
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.Owin.Security.AuthenticationTicket,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="ticket"></param>
+            <param name="authorizationRequest"></param>
+            <param name="authorizationResponse"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext.Identity">
+            <summary>
+            Gets the identity of the resource owner.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext.Properties">
+            <summary>
+            Dictionary containing the state of the authentication session.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext.AuthorizationRequest">
+            <summary>
+            Gets the authorization request. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext.AuthorizationResponse">
+            <summary>
+            Gets the authorization response. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext.AccessToken">
+            <summary>
+            Get the access code expected to
+            be returned to the client application.
+            Depending on the flow, it can be null.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectAuthorizationEndpointResponseContext.AuthorizationCode">
+            <summary>
+            Get the authorization code expected to
+            be returned to the client application.
+            Depending on the flow, it can be null.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectChallengeContext">
+            <summary>
+            Specifies the HTTP response header for the bearer authentication scheme.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectChallengeContext.#ctor(Microsoft.Owin.IOwinContext,System.String)">
+            <summary>
+            Initializes a new <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectChallengeContext"/>
+            </summary>
+            <param name="context">OWIN environment</param>
+            <param name="challenge">The www-authenticate header value.</param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectChallengeContext.Challenge">
+            <summary>
+            The www-authenticate header value.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantAuthorizationCodeContext">
+            <summary>
+            Provides context information when handling an OpenIdConnect authorization code grant.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantAuthorizationCodeContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage,Microsoft.Owin.Security.AuthenticationTicket)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantAuthorizationCodeContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="tokenRequest"></param>
+            <param name="ticket"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantAuthorizationCodeContext.TokenRequest">
+            <summary>
+            Gets the token request.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext">
+            <summary>
+            Provides context information used in handling an OpenIdConnect client credentials grant.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="tokenRequest"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext.ClientId">
+            <summary>
+            Gets the client_id parameter.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext.Scope">
+            <summary>
+            Gets the list of scopes requested by the client application.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantClientCredentialsContext.TokenRequest">
+            <summary>
+            Gets the token request.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext">
+            <summary>
+            Provides context information used when handling OpenIdConnect extension grant types.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="tokenRequest"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext.ClientId">
+            <summary>
+            Gets the client_id parameter.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext.GrantType">
+            <summary>
+            Gets the grant_type parameter.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantCustomExtensionContext.TokenRequest">
+            <summary>
+            Gets the token request.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantRefreshTokenContext">
+            <summary>
+            Provides context information used when granting an OpenIdConnect refresh token.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantRefreshTokenContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage,Microsoft.Owin.Security.AuthenticationTicket)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantRefreshTokenContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="tokenRequest"></param>
+            <param name="ticket"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantRefreshTokenContext.ClientId">
+            <summary>
+            The OpenIdConnect client id.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantRefreshTokenContext.TokenRequest">
+            <summary>
+            Gets the token request.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext">
+            <summary>
+            Provides context information used in handling an OpenIdConnect resource owner grant.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="tokenRequest"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext.ClientId">
+            <summary>
+            OpenIdConnect client id.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext.UserName">
+            <summary>
+            Resource owner username.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext.Password">
+            <summary>
+            Resource owner password.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext.Scope">
+            <summary>
+            Gets the list of scopes requested by the client application.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectGrantResourceOwnerCredentialsContext.TokenRequest">
+            <summary>
+            Gets the token request.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext">
+            <summary>
+            Provides context information used when determining the OpenIdConnect flow type based on the request.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.MatchesAuthorizationEndpoint">
+            <summary>
+            Sets the endpoint type to the authorization endpoint.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.MatchesConfigurationEndpoint">
+            <summary>
+            Sets the endpoint type to the configuration endpoint.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.MatchesKeysEndpoint">
+            <summary>
+            Sets the endpoint type to the JWKS endpoint.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.MatchesTokenEndpoint">
+            <summary>
+            Sets the endpoint type to token endpoint.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.MatchesNothing">
+            <summary>
+            Sets the endpoint type to unknown.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.IsAuthorizationEndpoint">
+            <summary>
+            Gets whether or not the endpoint is an
+            OAuth2/OpenID Connect authorization endpoint.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.IsConfigurationEndpoint">
+            <summary>
+            Gets whether or not the endpoint is an
+            OpenID Connect configuration metadata endpoint.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.IsKeysEndpoint">
+            <summary>
+            Gets whether or not the endpoint is an
+            OpenID Connect JWKS endpoint.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectMatchEndpointContext.IsTokenEndpoint">
+            <summary>
+            Gets whether or not the endpoint is an
+            OAuth2/OpenID Connect token endpoint.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext">
+            <summary>
+            Provides context information used when processing an OpenIdConnect token request.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.Owin.Security.AuthenticationTicket,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="ticket"></param>
+            <param name="tokenRequest"></param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext.Issue(System.Security.Claims.ClaimsIdentity,Microsoft.Owin.Security.AuthenticationProperties)">
+            <summary>
+            Issues the token.
+            </summary>
+            <param name="identity"></param>
+            <param name="properties"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext.Identity">
+            <summary>
+            Gets the identity of the resource owner.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext.Properties">
+            <summary>
+            Dictionary containing the state of the authentication session.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext.TokenRequest">
+            <summary>
+            Gets information about the token endpoint request. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointContext.TokenIssued">
+            <summary>
+            Gets whether or not the token should be issued.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext">
+            <summary>
+            Provides context information used at the end of a token-endpoint-request.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.Owin.Security.AuthenticationTicket,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="ticket"></param>
+            <param name="tokenRequest"></param>
+            <param name="tokenResponse"></param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.Issue(System.Security.Claims.ClaimsIdentity,Microsoft.Owin.Security.AuthenticationProperties)">
+            <summary>
+            Issues the token.
+            </summary>
+            <param name="identity"></param>
+            <param name="properties"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.AdditionalParameters">
+            <summary>
+            Enables additional values to be appended to the token response.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.Identity">
+            <summary>
+            Gets the identity of the resource owner.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.Properties">
+            <summary>
+            Dictionary containing the state of the authentication session.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.AccessToken">
+            <summary>
+            The issued Access-Token
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.TokenRequest">
+            <summary>
+            Gets the token request. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.TokenResponse">
+            <summary>
+            Gets the token response. 
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectTokenEndpointResponseContext.TokenIssued">
+            <summary>
+            Gets whether or not the token should be issued.
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateAuthorizationRequestContext">
+            <summary>
+            Provides context information used in validating an OpenIdConnect authorization request.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateAuthorizationRequestContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage,Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateAuthorizationRequestContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="authorizationRequest"></param>
+            <param name="clientContext"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateAuthorizationRequestContext.AuthorizationRequest">
+            <summary>
+            Gets the authorization request.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateAuthorizationRequestContext.ClientContext">
+            <summary>
+            Gets the client context. 
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext">
+            <summary>
+            Contains information about the client credentials.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="authorizationRequest"></param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext.Validated(System.String)">
+            <summary>
+            Sets the client id and marks the context as validated by the application.
+            </summary>
+            <param name="clientId"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext.TryGetBasicCredentials(System.String@,System.String@)">
+            <summary>
+            Extracts HTTP basic authentication credentials from the HTTP authenticate header.
+            </summary>
+            <param name="clientId"></param>
+            <param name="clientSecret"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientAuthenticationContext.TryGetFormCredentials(System.String@,System.String@)">
+            <summary>
+            Extracts forms authentication credentials from the HTTP request body.
+            </summary>
+            <param name="clientId"></param>
+            <param name="clientSecret"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext">
+            <summary>
+            Contains data about the OpenIdConnect client redirect URI
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="authorizationRequest"></param>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext.Validated">
+            <summary>
+            Marks this context as validated by the application.
+            IsValidated becomes true and HasError becomes false as a result of calling.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext.Validated(System.String)">
+            <summary>
+            Checks the redirect URI to determine whether it equals <see cref="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext.RedirectUri"/>.
+            </summary>
+            <param name="redirectUri"></param>
+            <returns></returns>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateClientRedirectUriContext.RedirectUri">
+            <summary>
+            Gets the client redirect URI
+            </summary>
+        </member>
+        <member name="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateTokenRequestContext">
+            <summary>
+            Provides context information used in validating an OpenIdConnect token request.
+            </summary>
+        </member>
+        <member name="M:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateTokenRequestContext.#ctor(Microsoft.Owin.IOwinContext,Owin.Security.OpenIdConnect.Server.OpenIdConnectServerOptions,Microsoft.IdentityModel.Protocols.OpenIdConnectMessage,Owin.Security.OpenIdConnect.Server.BaseValidatingClientContext)">
+            <summary>
+            Initializes a new instance of the <see cref="T:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateTokenRequestContext"/> class
+            </summary>
+            <param name="context"></param>
+            <param name="options"></param>
+            <param name="tokenRequest"></param>
+            <param name="clientContext"></param>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateTokenRequestContext.TokenRequest">
+            <summary>
+            Gets the token request data.
+            </summary>
+        </member>
+        <member name="P:Owin.Security.OpenIdConnect.Server.OpenIdConnectValidateTokenRequestContext.ClientContext">
+            <summary>
+            Gets information about the client.
+            </summary>
+        </member>
+    </members>
+</doc>

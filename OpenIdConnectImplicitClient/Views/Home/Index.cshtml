@@ -1,0 +1,16 @@
+﻿@* model is only available when is post back *@
+@model string
+<div class="jumbotron">
+    @if (Request.IsAuthenticated)
+    {
+        <h1>Welcome, @User.Identity.Name</h1>
+       
+        <a class="btn btn-lg btn-danger" href="/Authenticate/Signout">Sign out</a>
+    }
+
+    else
+    {
+        <h1>Welcome to OpenIdConnect implicit client app, anonymous</h1>
+        <a class="btn btn-lg btn-success" href="/Authenticate/Signin">Sign in</a>
+    }
+</div>

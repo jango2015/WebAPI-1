@@ -1,0 +1,29 @@
+﻿@{
+    ViewBag.Title = "Authorize";
+}
+
+
+@* model is Tuple<OpenIdConnectMessage,ClaimsIdentity> *@
+
+<h1>OpenId Connect Authorization Server</h1>
+<h2>OpenId Connect Authorize</h2>
+<form method="POST">
+    <p>Hello, @Model.Item2.Name</p>
+    <p>A third party application client id : @Model.Item1.ClientId wants to do the following on your behalf:</p>
+
+    <p>@Model.Item1.Scope</p>
+    
+    @* Flow the authorization request, it must exist for middleware to construct the context*@
+    @foreach (var parameter in Model.Item1.Parameters)
+    {
+        <input type="hidden" name="@parameter.Key" value="@parameter.Value" />
+    }
+
+    <p>
+        <input type="submit" name="submit.Grant" value="Grant" />
+        <input type="submit" name="submit.Deny" value="Deny" />
+        <input type="submit" name="submit.Login" value="Sign in as different user" />
+    </p>
+
+    </form>
+

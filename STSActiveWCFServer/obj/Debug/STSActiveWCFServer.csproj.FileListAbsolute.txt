@@ -1,0 +1,5 @@
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\bin\STSActiveWCFServer.dll.config
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\bin\STSActiveWCFServer.dll
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\bin\STSActiveWCFServer.pdb
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\obj\Debug\STSActiveWCFServer.dll
+C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\obj\Debug\STSActiveWCFServer.pdb

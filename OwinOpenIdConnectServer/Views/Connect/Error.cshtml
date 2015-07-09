@@ -1,0 +1,16 @@
+﻿
+@{
+    ViewBag.Title = "Error";
+}
+@*@Modle is OpenIdConnectMessage *@
+<div class="jumbotron">
+    <h1>An OpenID Connect error has occurred</h1>
+    <p class="lead text-left">
+        <strong>@Model.Error</strong>
+        @if (!string.IsNullOrWhiteSpace(Model.ErrorDescription))
+        {
+            <small>@Model.ErrorDescription</small>
+        }
+    </p>
+</div>
+
