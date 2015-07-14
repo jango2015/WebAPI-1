@@ -40,7 +40,6 @@ C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectCodeManual
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectCodeManualClient\bin\Microsoft.IdentityModel.Protocol.Extensions.xml
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectCodeManualClient\bin\System.IdentityModel.Tokens.Jwt.xml
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectCodeManualClient\obj\Debug\OpenIdConnectCodeManualClient.csprojResolveAssemblyReference.cache
-C:\Dev\Test\WebAPI\OpenIdConnectCodeManualClient\obj\Debug\OpenIdConnectCodeManualClient.csprojResolveAssemblyReference.cache
 C:\Dev\Test\WebAPI\OpenIdConnectCodeManualClient\obj\Debug\OpenIdConnectCodeManualClient.dll
 C:\Dev\Test\WebAPI\OpenIdConnectCodeManualClient\obj\Debug\OpenIdConnectCodeManualClient.pdb
 C:\Dev\Test\WebAPI\OpenIdConnectCodeManualClient\bin\OpenIdConnectCodeManualClient.dll.config

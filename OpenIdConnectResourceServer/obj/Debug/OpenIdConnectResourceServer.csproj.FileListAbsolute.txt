@@ -24,7 +24,6 @@ C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectResourceSe
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectResourceServer\obj\Debug\OpenIdConnectResourceServer.dll
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectResourceServer\obj\Debug\OpenIdConnectResourceServer.pdb
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OpenIdConnectResourceServer\obj\Debug\OpenIdConnectResourceServer.csprojResolveAssemblyReference.cache
-C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\obj\Debug\OpenIdConnectResourceServer.csprojResolveAssemblyReference.cache
 C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\obj\Debug\OpenIdConnectResourceServer.dll
 C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\obj\Debug\OpenIdConnectResourceServer.pdb
 C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\bin\OpenIdConnectResourceServer.dll.config

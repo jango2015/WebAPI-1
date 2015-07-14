@@ -13,7 +13,13 @@
             <input id="AccessToken" name="AccessToken" width="604" type="text" value="@ViewBag.AccessToken" />
             <input id="Authorize" name="submit.Authorize" value="Authorize" type="submit" />
             <br />
-            <br />
+            <br/>
+            Access Token Expires In <br/>
+            @ViewBag.ExpiresIn<br />
+
+            Access Token Type <br />
+            @ViewBag.TokenType<br />
+
             Refresh Tokensh Token<br />
             <input id="RefreshToken" name="RefreshToken" width="604" type="text" value="@ViewBag.RefreshToken" />
             <input id="Refresh" name="submit.Refresh" value="Refresh" type="submit" />

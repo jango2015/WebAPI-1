@@ -114,6 +114,11 @@ namespace OwinOauthAuthorizationServer
                     OnGrantClientCredentials = GrantClientCredetails
                 },
 
+                AccessTokenProvider = new AuthenticationTokenProvider
+                {
+                    OnCreate = CreateAccessToken,
+                    OnReceive = ReceiveAccessToken,
+                },
                 // Authorization code provider which creates and receives the authorization code.
                 AuthorizationCodeProvider = new AuthenticationTokenProvider
                 {
@@ -208,22 +213,47 @@ namespace OwinOauthAuthorizationServer
         private void ReceiveAuthenticationCode(AuthenticationTokenReceiveContext context)
         {
             string value;
+            //this gets back the serialized authenticationticket from token which is code 
             if (_authenticationCodes.TryRemove(context.Token, out value))
             {
                 context.DeserializeTicket(value);
+                var ticket = context.Ticket;
+
             }
         }
 
         //Issuing the refresh token
         private void CreateRefreshToken(AuthenticationTokenCreateContext context)
         {
-            context.SetToken(context.SerializeTicket());
+            var ticket = context.Ticket;
+            var token = context.SerializeTicket();
+            context.SetToken(token);
         }
 
         //Read out the refresh token according to the refresh code
         private void ReceiveRefreshToken(AuthenticationTokenReceiveContext context)
         {
             context.DeserializeTicket(context.Token);
+            
+            var ticket = context.Ticket;
+
+        }
+
+        //Issuing the access token, this is default implementation
+        private void CreateAccessToken(AuthenticationTokenCreateContext context)
+        {
+            var ticket = context.Ticket;
+            var token = context.SerializeTicket();
+            context.SetToken(token);
+        }
+
+        //Read out the access token according to the access code, this is default implementation as well
+        private void ReceiveAccessToken(AuthenticationTokenReceiveContext context)
+        {
+            context.DeserializeTicket(context.Token);
+
+            var ticket = context.Ticket;
+
         }
 
         private Task EndPointWatcher(OAuthMatchEndpointContext context)

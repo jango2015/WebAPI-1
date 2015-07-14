@@ -2,3 +2,12 @@ C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\bin\D
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\bin\Debug\MyServiceContract.pdb
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\obj\Debug\MyServiceContract.dll
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\obj\Debug\MyServiceContract.pdb
+C:\Dev\Test\WebAPI\MyServiceContract\bin\Debug\MyServiceContract.dll
+C:\Dev\Test\WebAPI\MyServiceContract\bin\Debug\MyServiceContract.pdb
+C:\Dev\Test\WebAPI\MyServiceContract\bin\Debug\Microsoft.Owin.dll
+C:\Dev\Test\WebAPI\MyServiceContract\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
+C:\Dev\Test\WebAPI\MyServiceContract\bin\Debug\Owin.dll
+C:\Dev\Test\WebAPI\MyServiceContract\bin\Debug\Microsoft.Owin.xml
+C:\Dev\Test\WebAPI\MyServiceContract\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+C:\Dev\Test\WebAPI\MyServiceContract\obj\Debug\MyServiceContract.dll
+C:\Dev\Test\WebAPI\MyServiceContract\obj\Debug\MyServiceContract.pdb

@@ -178,3 +178,5 @@ C:\Dev\Test\WebAPI\OAuthCodeGrant\obj\Debug\OAuthCodeGrant.csproj.App.config
 C:\Dev\Test\WebAPI\OAuthCodeGrant\obj\Debug\OAuthCodeGrant.csprojResolveAssemblyReference.cache
 C:\Dev\Test\WebAPI\OAuthCodeGrant\obj\Debug\OAuthCodeGrant.dll
 C:\Dev\Test\WebAPI\OAuthCodeGrant\obj\Debug\OAuthCodeGrant.pdb
+C:\Dev\Test\WebAPI\OAuthCodeGrant\bin\WebAPICommon.dll
+C:\Dev\Test\WebAPI\OAuthCodeGrant\bin\WebAPICommon.pdb

@@ -102,5 +102,3 @@ C:\Dev\Test\WebAPI\OwinOpenIdConnectServer\bin\System.Web.WebPages.xml
 C:\Dev\Test\WebAPI\OwinOpenIdConnectServer\bin\System.Web.WebPages.Deployment.xml
 C:\Dev\Test\WebAPI\OwinOpenIdConnectServer\bin\System.Web.WebPages.Razor.xml
 C:\Dev\Test\WebAPI\OwinOpenIdConnectServer\bin\Antlr3.Runtime.pdb
-C:\Dev\Test\WebAPI\OwinOpenIdConnectServer\bin\Owin.Security.OpenIdConnect.Extensions.pdb
-C:\Dev\Test\WebAPI\OwinOpenIdConnectServer\bin\Owin.Security.OpenIdConnect.Extensions.xml
