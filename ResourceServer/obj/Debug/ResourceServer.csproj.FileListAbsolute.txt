@@ -24,7 +24,6 @@ C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\ResourceServer\bin\Syst
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\ResourceServer\obj\Debug\ResourceServer.csprojResolveAssemblyReference.cache
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\ResourceServer\bin\Microsoft.Owin.Security.OAuth.pdb
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\ResourceServer\bin\Microsoft.Owin.Security.pdb
-C:\Dev\Test\WebAPI\ResourceServer\obj\Debug\ResourceServer.csprojResolveAssemblyReference.cache
 C:\Dev\Test\WebAPI\ResourceServer\obj\Debug\ResourceServer.dll
 C:\Dev\Test\WebAPI\ResourceServer\obj\Debug\ResourceServer.pdb
 C:\Dev\Test\WebAPI\ResourceServer\bin\ResourceServer.dll.config
@@ -50,3 +49,4 @@ C:\Dev\Test\WebAPI\ResourceServer\bin\Newtonsoft.Json.xml
 C:\Dev\Test\WebAPI\ResourceServer\bin\System.Net.Http.Formatting.xml
 C:\Dev\Test\WebAPI\ResourceServer\bin\System.Web.Http.xml
 C:\Dev\Test\WebAPI\ResourceServer\bin\System.Web.Http.Owin.xml
+C:\Dev\Test\WebAPI\ResourceServer\obj\Debug\ResourceServer.csprojResolveAssemblyReference.cache

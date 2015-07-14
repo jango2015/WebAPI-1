@@ -2,7 +2,9 @@
 using System.Security.Claims;
 using System.Web;
 using System.Web.Mvc;
+using Microsoft.Owin.Infrastructure;
 using Microsoft.Owin.Security.OAuth;
+using Microsoft.Owin.Security.OAuth.Messages;
 
 namespace OwinOauthAuthorizationServer.Controllers
 {
@@ -38,6 +40,20 @@ namespace OwinOauthAuthorizationServer.Controllers
                         identity.AddClaim(new Claim("urn:oauth:scope", scope));
                     }
                     authentication.SignIn(identity);
+                }
+                if (!string.IsNullOrEmpty(Request.Form.Get("submit.Deny")))
+                {
+                    var redirectedUri = Request.QueryString["redirect_uri"];
+
+                    string location = WebUtilities.AddQueryString(redirectedUri,
+                        "error",
+                        "invalid_grant");
+
+
+                    location = WebUtilities.AddQueryString(location, "error_description", "User denied the access grant");
+                    
+                    
+                   return Redirect(location);
                 }
                 else if (!string.IsNullOrEmpty(Request.Form.Get("submit.Login")))
                 {

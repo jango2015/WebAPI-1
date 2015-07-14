@@ -40,3 +40,8 @@ C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\obj\Debug\OpenIdConnectWPFHybrid
 C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\obj\Debug\OpenIdConnectWPFHybridClient.csproj.GenerateResource.Cache
 C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\obj\Debug\OpenIdConnectWPFHybridClient.exe
 C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\obj\Debug\OpenIdConnectWPFHybridClient.pdb
+C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\bin\Debug\Microsoft.Owin.dll
+C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\bin\Debug\Microsoft.Owin.Host.SystemWeb.dll
+C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\bin\Debug\Owin.dll
+C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\bin\Debug\Microsoft.Owin.xml
+C:\Dev\Test\WebAPI\OpenIdConnectWPFHybridClient\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml

@@ -3,3 +3,13 @@ C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\bin\
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\bin\STSActiveWCFServer.pdb
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\obj\Debug\STSActiveWCFServer.dll
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSActiveWCFServer\obj\Debug\STSActiveWCFServer.pdb
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\STSActiveWCFServer.dll.config
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\STSActiveWCFServer.dll
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\STSActiveWCFServer.pdb
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\Microsoft.Owin.dll
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\Microsoft.Owin.Host.SystemWeb.dll
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\Owin.dll
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\Microsoft.Owin.xml
+C:\Dev\Test\WebAPI\STSActiveWCFServer\bin\Microsoft.Owin.Host.SystemWeb.xml
+C:\Dev\Test\WebAPI\STSActiveWCFServer\obj\Debug\STSActiveWCFServer.dll
+C:\Dev\Test\WebAPI\STSActiveWCFServer\obj\Debug\STSActiveWCFServer.pdb

@@ -72,7 +72,6 @@ C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSServerAndService\obj
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSServerAndService\obj\Debug\STSServerAndService.pdb
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSServerAndService\bin\MyConstants.dll
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\STSServerAndService\bin\MyConstants.pdb
-C:\Dev\Test\WebAPI\STSServerAndService\obj\Debug\STSServerAndService.csprojResolveAssemblyReference.cache
 C:\Dev\Test\WebAPI\STSServerAndService\obj\Debug\STSServerAndService.dll
 C:\Dev\Test\WebAPI\STSServerAndService\obj\Debug\STSServerAndService.pdb
 C:\Dev\Test\WebAPI\STSServerAndService\bin\STSServerAndService.dll.config
