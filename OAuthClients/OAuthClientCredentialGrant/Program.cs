@@ -18,8 +18,8 @@ namespace OAuthClientCredentialGrant
 
             Console.WriteLine("Requesting Token...");
 
-            //  var accessToken = RequestTokenCredentialUsingForm();
-            var accessToken = RequestTokenCredentialUsingAuthorizationHeader();
+              var accessToken = RequestTokenCredentialUsingForm();
+           // var accessToken = RequestTokenCredentialUsingAuthorizationHeader();
 
             Console.WriteLine("Access Token: {0}", accessToken);
 
@@ -59,7 +59,7 @@ namespace OAuthClientCredentialGrant
                        string.Format("{0}:{1}", Clients.Client1.Id, Clients.Client1.Secret))));
 
                 var request = new HttpRequestMessage(HttpMethod.Post,
-                    Paths.OpenIdConnectServerBaseAddress + Paths.OepnIdTokenPath);
+                    Paths.AuthorizationServerBaseAddress + Paths.TokenPath);
                 var clientCredentialsRequestElements = CreateRequestClientCredentialsElementsGrantTypeOnly(
                     "client_credentials",
                     "read write");
@@ -67,7 +67,8 @@ namespace OAuthClientCredentialGrant
                 request.Content = new FormUrlEncodedContent(clientCredentialsRequestElements);
 
                 var response = client.SendAsync(request).Result;
-
+                //According to spec, no refreshing token should be issued
+                // but it is
                 var payload = JObject.Parse(response.Content.ReadAsStringAsync().Result);
 
                 return payload.SelectToken("access_token").ToString();
@@ -81,7 +82,7 @@ namespace OAuthClientCredentialGrant
             {
 
                 var request = new HttpRequestMessage(HttpMethod.Post,
-                    Paths.OpenIdConnectServerBaseAddress + Paths.OepnIdTokenPath);
+                    Paths.AuthorizationServerBaseAddress + Paths.TokenPath);
                 var clientCredentialsRequestElements = CreateRequestClientCredentialsElements(
                     Clients.Client1.Id,
                     Clients.Client1.Secret,
