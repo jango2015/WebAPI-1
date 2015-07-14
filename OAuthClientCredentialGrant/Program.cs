@@ -1,55 +1,125 @@
 ﻿
 
 using System;
+using System.Collections.Generic;
 using System.Net.Http;
-using DotNetOpenAuth.OAuth2;
+using System.Net.Http.Headers;
 using MyConstants;
+using Newtonsoft.Json.Linq;
+using WebAPICommon;
 
 namespace OAuthClientCredentialGrant
 {
     class Program
     {
-        private static WebServerClient _webServerClient;
-        private static string _accessToken;
 
         static void Main(string[] args)
         {
-            InitializeWebServerClient();
 
             Console.WriteLine("Requesting Token...");
-            RequestToken();
 
-            Console.WriteLine("Access Token: {0}", _accessToken);
+            //  var accessToken = RequestTokenCredentialUsingForm();
+            var accessToken = RequestTokenCredentialUsingAuthorizationHeader();
+
+            Console.WriteLine("Access Token: {0}", accessToken);
 
             Console.WriteLine("Access Protected Resource");
-            AccessProtectedResource();
+            AccessProtectedResource(accessToken);
 
             Console.ReadKey();
         }
 
-        private static void AccessProtectedResource()
+        private static void AccessProtectedResource(string accessToken)
         {
             var resourceServerUri = Paths.ResourceServerBaseAddress;
-            var client = new HttpClient(_webServerClient.CreateAuthorizingHandler(_accessToken));
-            var body = client.GetStringAsync(new Uri(resourceServerUri + Paths.APIPath)).Result;
-            Console.WriteLine(body);
-        }
 
-        private static void RequestToken()
-        {
-            var state = _webServerClient.GetClientAccessToken(new[] { "scope1", "scope2" });
-            _accessToken = state.AccessToken;
-        }
+            var handler = new BearerTokenClientMessageHandler(accessToken, new HttpClientHandler());
 
-        private static void InitializeWebServerClient()
-        {
-            var authorizationServerUri = Paths.AuthorizationServerBaseAddress;
-            var authorizationServer = new AuthorizationServerDescription
+            using (var client = new HttpClient(handler))
             {
-                AuthorizationEndpoint = new Uri(authorizationServerUri + Paths.AuthorizePath),
-                TokenEndpoint = new Uri(authorizationServerUri + Paths.TokenPath)
-            };
-            _webServerClient = new WebServerClient(authorizationServer, Clients.Client1.Id, Clients.Client1.Secret);
+                var cleinturl = new Uri(resourceServerUri + Paths.APIPath);
+                var body = client.GetStringAsync(cleinturl).Result;
+                Console.WriteLine(body);
+
+            }
+
         }
+
+
+
+        private static string RequestTokenCredentialUsingAuthorizationHeader()
+        {
+            //Request for access token 
+            using (var client = new HttpClient())
+            {
+                //providing client credential through basic header
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic",
+               Convert.ToBase64String(
+                   System.Text.ASCIIEncoding.ASCII.GetBytes(
+                       string.Format("{0}:{1}", Clients.Client1.Id, Clients.Client1.Secret))));
+
+                var request = new HttpRequestMessage(HttpMethod.Post,
+                    Paths.OpenIdConnectServerBaseAddress + Paths.OepnIdTokenPath);
+                var clientCredentialsRequestElements = CreateRequestClientCredentialsElementsGrantTypeOnly(
+                    "client_credentials",
+                    "read write");
+
+                request.Content = new FormUrlEncodedContent(clientCredentialsRequestElements);
+
+                var response = client.SendAsync(request).Result;
+
+                var payload = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                return payload.SelectToken("access_token").ToString();
+            }
+        }
+
+        private static string RequestTokenCredentialUsingForm()
+        {
+            //Request for access token 
+            using (var client = new HttpClient())
+            {
+
+                var request = new HttpRequestMessage(HttpMethod.Post,
+                    Paths.OpenIdConnectServerBaseAddress + Paths.OepnIdTokenPath);
+                var clientCredentialsRequestElements = CreateRequestClientCredentialsElements(
+                    Clients.Client1.Id,
+                    Clients.Client1.Secret,
+                    "client_credentials",
+                    "read write");
+
+                request.Content = new FormUrlEncodedContent(clientCredentialsRequestElements);
+
+                var response = client.SendAsync(request).Result;
+
+                var payload = JObject.Parse(response.Content.ReadAsStringAsync().Result);
+
+                return payload.SelectToken("access_token").ToString();
+            }
+        }
+
+
+        private static Dictionary<string, string> CreateRequestClientCredentialsElements(string clientId, string clientSecret,
+         string grantType, string scope)
+        {
+            var segments = new Dictionary<string, string>();
+            segments.Add("client_id", clientId);
+            segments.Add("client_secret", clientSecret);
+            segments.Add("grant_type", grantType);
+            segments.Add("scope", scope);
+
+            return segments;
+        }
+
+        private static Dictionary<string, string> CreateRequestClientCredentialsElementsGrantTypeOnly(
+      string grantType, string scope)
+        {
+            var segments = new Dictionary<string, string>();
+            segments.Add("grant_type", grantType);
+            segments.Add("scope", scope);
+
+            return segments;
+        }
+
     }
 }

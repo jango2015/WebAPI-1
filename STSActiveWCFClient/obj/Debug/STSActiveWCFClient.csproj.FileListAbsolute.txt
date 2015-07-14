@@ -18,3 +18,4 @@ C:\Dev\Test\WebAPI\STSActiveWCFClient\bin\Debug\Microsoft.Owin.Host.SystemWeb.dl
 C:\Dev\Test\WebAPI\STSActiveWCFClient\bin\Debug\Owin.dll
 C:\Dev\Test\WebAPI\STSActiveWCFClient\bin\Debug\Microsoft.Owin.xml
 C:\Dev\Test\WebAPI\STSActiveWCFClient\bin\Debug\Microsoft.Owin.Host.SystemWeb.xml
+C:\Dev\Test\WebAPI\STSActiveWCFClient\obj\Debug\STSActiveWCFClient.csprojResolveAssemblyReference.cache

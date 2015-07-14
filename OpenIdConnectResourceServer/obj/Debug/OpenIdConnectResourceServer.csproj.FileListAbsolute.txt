@@ -49,3 +49,4 @@ C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\bin\Newtonsoft.Json.xml
 C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\bin\System.Net.Http.Formatting.xml
 C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\bin\System.Web.Http.xml
 C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\bin\System.Web.Http.Owin.xml
+C:\Dev\Test\WebAPI\OpenIdConnectResourceServer\obj\Debug\OpenIdConnectResourceServer.csprojResolveAssemblyReference.cache

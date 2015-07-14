@@ -35,7 +35,6 @@ C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OwinOauthAuthorizationS
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OwinOauthAuthorizationServer\bin\Microsoft.Owin.Security.Google.pdb
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OwinOauthAuthorizationServer\bin\Microsoft.Owin.Security.OAuth.pdb
 C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\OwinOauthAuthorizationServer\bin\Microsoft.Owin.Security.pdb
-C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\obj\Debug\OwinOauthAuthorizationServer.csprojResolveAssemblyReference.cache
 C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\obj\Debug\OwinOauthAuthorizationServer.dll
 C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\obj\Debug\OwinOauthAuthorizationServer.pdb
 C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\bin\OwinOauthAuthorizationServer.dll.config
@@ -71,3 +70,4 @@ C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\bin\System.Web.Razor.xml
 C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\bin\System.Web.WebPages.xml
 C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\bin\System.Web.WebPages.Deployment.xml
 C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\bin\System.Web.WebPages.Razor.xml
+C:\Dev\Test\WebAPI\OwinOauthAuthorizationServer\obj\Debug\OwinOauthAuthorizationServer.csprojResolveAssemblyReference.cache
