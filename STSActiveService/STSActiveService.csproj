@@ -99,7 +99,7 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyConstants\MyConstants.csproj">
+    <ProjectReference Include="..\Common\MyConstants\MyConstants.csproj">
       <Project>{dda6feac-6794-4c48-89df-028ae5331d16}</Project>
       <Name>MyConstants</Name>
     </ProjectReference>

@@ -183,12 +183,6 @@
     <Content Include="Views\Authenticate\Token.cshtml" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MyConstants\MyConstants.csproj">
-      <Project>{dda6feac-6794-4c48-89df-028ae5331d16}</Project>
-      <Name>MyConstants</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
     <Content Include="fonts\glyphicons-halflings-regular.woff" />
     <Content Include="fonts\glyphicons-halflings-regular.ttf" />
     <Content Include="fonts\glyphicons-halflings-regular.eot" />
@@ -196,6 +190,12 @@
       <SubType>Designer</SubType>
     </Content>
     <None Include="Project_Readme.html" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\MyConstants\MyConstants.csproj">
+      <Project>{dda6feac-6794-4c48-89df-028ae5331d16}</Project>
+      <Name>MyConstants</Name>
+    </ProjectReference>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>

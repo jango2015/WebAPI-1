@@ -21,6 +21,7 @@ namespace MyConstants
         // public const string AuthorizeCodeCallBackPath = "http://johnson-vpc.sysmexnz.co.nz/OAuthCodeGrant";
 
         public const string AuthorizeCodeCallBackPath = "http://localhost:51175/";
+        public const string AuthorizeImplicitCallBackPath = "http://localhost:56995/";
 
         /// <summary>
         /// ImplicitGrant project should be running on this specific port '38515'

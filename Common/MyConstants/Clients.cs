@@ -15,7 +15,9 @@ namespace MyConstants
         {
             Id = "7890ab",
             Secret = "7890ab",
-            RedirectUrl = Paths.OpenIdConnectHybridCallBackPath
+            //RedirectUrl = Paths.OpenIdConnectHybridCallBackPath
+            RedirectUrl = Paths.AuthorizeImplicitCallBackPath
+
         };
 
         public readonly static Client Client3 = new Client
