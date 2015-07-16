@@ -1,0 +1,94 @@
+﻿@using MyConstants
+
+@{
+    ViewBag.Title = "Index";
+}
+
+<h2>OAuth2 JavaScript Implicit Client</h2>
+
+<button id="Authorize" class="btn btn-default">Get Access Token</button>
+<br />
+<br />
+<input id="AccessToken" value="" width="300px">
+<br />
+<br />
+<button id="CallApi" class="btn btn-default">Call API</button>
+<br />
+<br />
+<input id="output" value="" width="300px">
+<br />
+<br />
+@section scripts
+{
+    <script>
+        (function($) {
+            var authorizeUri = '@(Paths.AuthorizationServerBaseAddress + Paths.AuthorizePath)';
+            var tokenUri = '@(Paths.AuthorizationServerBaseAddress + Paths.TokenPath)';
+            var apiUri = '@(Paths.ResourceServerBaseAddress + Paths.APIPath)';
+            var returnUri = '@Clients.Client2.RedirectUrl';
+
+
+            var extractToken = function(hash) {
+                var match = hash.match(/access_token=([\w-]+)/);
+                return !!match && match[1];
+            };
+            var extractState = function(hash) {
+                var match = hash.match(/state=([\w-]+)/);
+                return !!match && match[1];
+            };
+
+            var state = extractState(document.location.hash);
+
+            if (state == 'my-nonce') {
+                var token = extractToken(document.location.hash);
+                if (token) {
+                    $("#AccessToken").val(token);
+                }
+            }
+
+            $('#Authorize').click(function() {
+                var nonce = 'my-nonce';
+
+                var uri = addQueryString(authorizeUri, {
+                    'client_id': '@Clients.Client2.Id',
+                    'redirect_uri': returnUri,
+                    'state': nonce,
+                    'scope': 'bio notes',
+                    'response_type': 'token',
+                });
+
+                // redirect
+                window.location = uri;
+
+
+            });
+
+            $('#CallApi').click(function() {
+                $.ajax(apiUri, {
+                    beforeSend: function(xhr) {
+                        xhr.setRequestHeader('Authorization', 'Bearer ' + $('#AccessToken').val());
+                    },
+                    dataType: 'text',
+                    cache: false,
+                    success: function(data) {
+                        console.log(data);
+                        $('#output').val(data);
+                    }
+                });
+            });
+
+            function addQueryString(uri, parameters) {
+                var delimiter = (uri.indexOf('?') == -1) ? '?' : '&';
+                for (var parameterName in parameters) {
+                    var parameterValue = parameters[parameterName];
+                    uri += delimiter + encodeURIComponent(parameterName) + '=' + encodeURIComponent(parameterValue);
+                    delimiter = '&';
+                }
+                return uri;
+            }
+
+        })(jQuery);
+    </script>
+
+}
+

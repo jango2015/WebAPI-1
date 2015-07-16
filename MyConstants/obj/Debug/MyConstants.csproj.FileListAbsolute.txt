@@ -1,8 +1,0 @@
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyConstants\bin\Debug\MyConstants.dll
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyConstants\bin\Debug\MyConstants.pdb
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyConstants\obj\Debug\MyConstants.dll
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyConstants\obj\Debug\MyConstants.pdb
-C:\Dev\Test\WebAPI\MyConstants\bin\Debug\MyConstants.dll
-C:\Dev\Test\WebAPI\MyConstants\bin\Debug\MyConstants.pdb
-C:\Dev\Test\WebAPI\MyConstants\obj\Debug\MyConstants.dll
-C:\Dev\Test\WebAPI\MyConstants\obj\Debug\MyConstants.pdb

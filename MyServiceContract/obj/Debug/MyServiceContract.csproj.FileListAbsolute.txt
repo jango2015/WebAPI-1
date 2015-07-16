@@ -1,4 +1,0 @@
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\bin\Debug\MyServiceContract.dll
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\bin\Debug\MyServiceContract.pdb
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\obj\Debug\MyServiceContract.dll
-C:\Dev\Test\Security\OAUTH2\OwinOauthAuthorizationServer\MyServiceContract\obj\Debug\MyServiceContract.pdb
