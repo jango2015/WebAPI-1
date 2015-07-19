@@ -25,9 +25,9 @@ namespace MyConstants
             Id = "7890cd",
             Secret = "7890cd",
            // RedirectUrl = Paths.OpenIdConnectHybridCallBackPath
-           // RedirectUrl = Paths.OpenIdConnectCodeCallBackPath
+            RedirectUrl = Paths.OpenIdConnectCodeCallBackPath
            // RedirectUrl = Paths.OpenIdConnectImplicitCallBackPath
-            RedirectUrl = Paths.OpenIdConnectJavascriptImplicitCallBackPath
+           // RedirectUrl = Paths.OpenIdConnectJavascriptImplicitCallBackPath
            // RedirectUrl = Paths.OpenIdConnectWpfHybridCallBackPath
         };
         

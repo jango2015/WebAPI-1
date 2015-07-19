@@ -166,6 +166,16 @@ namespace OpenIdConnectCodeManualClient.Controllers
                 IssuerSigningToken = jsonWebKeySet.GetSigningTokens().First()
             };
 
+            /**
+             * This is example of loading  signing public key explicityl
+             *        //SigningToken = new X509SecurityToken(
+                //   X509
+                //   .LocalMachine
+                //   .TrustedPeople
+                //   .SubjectDistinguishedName
+                //   .Find("CN=idsrv3test", false)
+                //   .First())
+             * **/
             var idToken = payload.SelectToken("id_token").ToString();
             var accessToken = payload.SelectToken("access_token").ToString();
             var refreshToken = payload.SelectToken("refresh_token").ToString();
@@ -198,7 +208,13 @@ namespace OpenIdConnectCodeManualClient.Controllers
             {
                 claims.Add(new Claim("refresh_token", refreshToken));
             }
+
+            if (!string.IsNullOrWhiteSpace(idToken))
+            {
+                claims.Add(new Claim("id_token",idToken));
+            }
             
+
             var newid = new ClaimsIdentity(claims, "CodeClientCookie");
             Request.GetOwinContext().Authentication.SignIn(newid);
         }

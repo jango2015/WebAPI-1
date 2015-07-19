@@ -33,7 +33,7 @@ namespace MyConstants
         public const string OpenIdConnectCodeCallBackPath = "http://localhost:61645/Authenticate/CallBack";
 
         public const string OpenIdConnectJavascriptImplicitCallBackPath = "http://localhost:60312/index.html";
-
+       
         public const string OpenIdConnectWpfHybridCallBackPath = "oob://localhost/OpenIdConnectWPFHybridClient";
         
         /// <summary>
