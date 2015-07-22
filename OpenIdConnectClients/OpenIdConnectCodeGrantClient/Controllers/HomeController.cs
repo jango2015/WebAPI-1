@@ -30,7 +30,7 @@ namespace OpenIdConnectHybridClient.Controllers
                 using (var client = new HttpClient())
                 {
                     var request = new HttpRequestMessage(HttpMethod.Get,
-                        Paths.ResourceServerOpenIdConnectBaseAddress + Paths.APIPath);
+                        Paths.ResourceServerBaseAddress + Paths.APIPath);
              
 
                     var accessToken = identity.FindFirst(OpenIdConnectParameterNames.AccessToken).Value;

@@ -50,9 +50,6 @@ namespace MyConstants
         /// </summary>
         public const string ResourceServerBaseAddress = "http://localhost:52695";
 
-        public const string ResourceServerOpenIdConnectBaseAddress = "http://localhost:55235";
-       
-
         // The path for api of resource server
         public const string APIPath = "/api/Me";
         #endregion Oauth2 settings

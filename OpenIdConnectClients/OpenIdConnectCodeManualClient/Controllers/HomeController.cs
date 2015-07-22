@@ -32,7 +32,7 @@ namespace OpenIdConnectCodeManualClient.Controllers
 
             using (var client = new HttpClient())
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, Paths.ResourceServerOpenIdConnectBaseAddress + Paths.APIPath);
+                var request = new HttpRequestMessage(HttpMethod.Get, Paths.ResourceServerBaseAddress + Paths.APIPath);
                 var identity = (ClaimsIdentity)User.Identity;
 
                 var accessToken = identity.FindFirst("access_token").Value;
