@@ -27,8 +27,8 @@ namespace MyConstants
            // RedirectUrl = Paths.OpenIdConnectHybridCallBackPath
            // RedirectUrl = Paths.OpenIdConnectCodeCallBackPath
            // RedirectUrl = Paths.OpenIdConnectImplicitCallBackPath
-            RedirectUrl = Paths.OpenIdConnectJavascriptImplicitCallBackPath
-           // RedirectUrl = Paths.OpenIdConnectWpfHybridCallBackPath
+           // RedirectUrl = Paths.OpenIdConnectJavascriptImplicitCallBackPath
+            RedirectUrl = Paths.OpenIdConnectWpfHybridCallBackPath
         };
         
     }

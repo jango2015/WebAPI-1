@@ -1,5 +1,6 @@
 ﻿
 using System;
+using System.IdentityModel.Tokens;
 using System.Linq;
 using System.Net.Http;
 using System.Net.Http.Headers;
@@ -18,18 +19,8 @@ namespace OpenIdConnectCodeManualClient.Controllers
         public ActionResult Index()
         {
 
-            if (Request.IsAuthenticated)
-            {
-                var identity = (ClaimsIdentity) User.Identity;
+            DisplayTokens();
 
-                // to get tokens 
-                var accessToken = identity.Claims.FirstOrDefault(x => x.Type == "access_token").Value;
-                var refreshToken = identity.Claims.FirstOrDefault(x => x.Type == "refresh_token").Value;
-                ViewBag.AccessToken = ParseJwt(accessToken);
-                ViewBag.RefreshToken = ParseJwt(refreshToken);
-
-
-            }
             return View();
         }
 
@@ -37,9 +28,11 @@ namespace OpenIdConnectCodeManualClient.Controllers
         [HttpPost, Authorize]
         public async Task<ActionResult> Index(CancellationToken cancellationToken)
         {
+
+
             using (var client = new HttpClient())
             {
-                var request = new HttpRequestMessage(HttpMethod.Get, Paths.ResourceServerOpenIdConnectBaseAddress + Paths.APIPath);
+                var request = new HttpRequestMessage(HttpMethod.Get, Paths.ResourceServerBaseAddress + Paths.APIPath);
                 var identity = (ClaimsIdentity)User.Identity;
 
                 var accessToken = identity.FindFirst("access_token").Value;
@@ -50,12 +43,34 @@ namespace OpenIdConnectCodeManualClient.Controllers
 
                 response.EnsureSuccessStatusCode();
 
+                DisplayTokens();
+
                 return View("Index", model: await response.Content.ReadAsStringAsync());
 
             }
         }
 
-        private string ParseJwt(string token)
+
+        private void DisplayTokens()
+        {
+            if (Request.IsAuthenticated)
+            {
+                var identity = (ClaimsIdentity)User.Identity;
+
+                // to get tokens 
+                var accessToken = identity.Claims.FirstOrDefault(x => x.Type == "access_token").Value;
+                var refreshToken = identity.Claims.FirstOrDefault(x => x.Type == "refresh_token").Value;
+                var idToken = identity.Claims.FirstOrDefault(x => x.Type == "id_token").Value;
+                ViewBag.AccessToken = accessToken;
+                ViewBag.RefreshToken = refreshToken;
+                ViewBag.IdTokenHeader = ParseJwtHeader(idToken);
+                ViewBag.IdTokenPayload = ParseJwtPayload(idToken);
+                ViewBag.IdTokenSignature = ParseJwtSignature(idToken);
+
+            }
+        }
+
+        private string ParseJwtHeader(string token)
         {
             if (!token.Contains("."))
             {
@@ -63,10 +78,38 @@ namespace OpenIdConnectCodeManualClient.Controllers
             }
 
             var parts = token.Split('.');
-            var part = Encoding.UTF8.GetString(Convert.FromBase64String(parts[1]));
 
-            var jwt = JObject.Parse(part);
-            return jwt.ToString();
+            var header =JObject.Parse(Base64UrlEncoder.Decode(parts[0]));
+            
+            return header.ToString();
+        }
+
+        private string ParseJwtPayload(string token)
+        {
+            if (!token.Contains("."))
+            {
+                return token;
+            }
+
+            var parts = token.Split('.');
+
+            var payload = JObject.Parse(Base64UrlEncoder.Decode(parts[1]));
+
+            return payload.ToString();
+        }
+
+        private string ParseJwtSignature(string token)
+        {
+            if (!token.Contains("."))
+            {
+                return token;
+            }
+
+            var parts = token.Split('.');
+
+            var sign = parts[2];
+
+            return sign;
         }
     
     }

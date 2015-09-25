@@ -9,15 +9,30 @@
         {
             <h3>Message received from the resource controller: @Model</h3>
         }
-        
+
         <p>
-        <strong>Access token:</strong>
-        <pre>@ViewBag.AccessToken</pre>
+            <strong>Access token:</strong>
+            <pre>@ViewBag.AccessToken</pre>
         </p>
-         <p>
-        <strong>Refresh token:</strong>
-        <pre>@ViewBag.RefreshToken</pre>
+        <p>
+            <strong>Refresh token:</strong>
+            <pre>@ViewBag.RefreshToken</pre>
         </p>
+        <p>
+            <strong>Id token Header :</strong>
+            <pre>@ViewBag.IdTokenHeader</pre>
+        </p>
+
+        <p>
+            <strong>Id token Payload :</strong>
+            <pre>@ViewBag.IdTokenPayload</pre>
+        </p>
+
+        <p>
+            <strong>Id token Signature :</strong>
+            <pre>@ViewBag.IdTokenSignature</pre>
+        </p>
+
         <form action="~/" method="post">
             <button class="btn btn-lg btn-warning" type="submit">Query the resource controller</button>
         </form>

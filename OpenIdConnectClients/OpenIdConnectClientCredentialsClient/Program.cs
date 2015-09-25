@@ -77,7 +77,7 @@ namespace OpenIdConnectClientCredentialsClient
             using (var client = new HttpClient())
             {
                 var request = new HttpRequestMessage(HttpMethod.Get,
-                    Paths.ResourceServerOpenIdConnectBaseAddress + Paths.APIPath);
+                    Paths.ResourceServerBaseAddress + Paths.APIPath);
 
 
                 request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", accessToken);

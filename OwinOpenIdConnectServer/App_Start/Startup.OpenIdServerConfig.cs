@@ -45,6 +45,7 @@ namespace OwinOpenIdConnectServer
              * Following end points already implemented by  OpenIdConnectServer
              * ConfigurationEndpointPath = "/.well-known/openid-configuration"
              * KeysEndpointPath = "/.well-known/jwks"
+             * to disable them set two paths to null value
              **/
             app.UseOpenIdConnectServer(
                 new OpenIdConnectServerOptions

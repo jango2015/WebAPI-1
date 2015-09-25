@@ -4,7 +4,16 @@
     @if (Request.IsAuthenticated)
     {
         <h1>Welcome, @User.Identity.Name</h1>
-       
+        <br />
+        <br />
+        <p>Access Token is @ViewBag.AccessToken</p>
+        <br />
+        <br />
+        <p>Id Token is @ViewBag.IdToken</p>
+        <br />
+        <br />
+
+
         <a class="btn btn-lg btn-danger" href="/Authenticate/Signout">Sign out</a>
     }
 
